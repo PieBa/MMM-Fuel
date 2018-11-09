@@ -61,6 +61,7 @@ Module.register('MMM-Fuel', {
      * @property {boolean|int} shortenText - Max characters to be shown for name and address.
      * @property {boolean} showAddress - Flag to show the gas stations address.
      * @property {boolean} showOpenOnly - Flag to show only open gas stations or all.
+	 * @property {boolean} hideDistance - Flag to show or hide distance column
      * @property {boolean} iconHeader - Flag to display the car icon in the header.
      * @property {boolean} rotate - Flag to enable/disable rotation between sort by price and distance.
      * @property {string[]} types - Fuel types to show.
@@ -82,6 +83,7 @@ Module.register('MMM-Fuel', {
         shortenText: false,
         showAddress: true,
         showOpenOnly: false,
+		hideDistance: false,
         iconHeader: true,
         rotate: true,
         types: ['diesel'],
@@ -331,18 +333,20 @@ Module.register('MMM-Fuel', {
             }
         }
 
-        const distanceIconLabel = document.createElement('th');
-        distanceIconLabel.classList.add('centered');
+		if (!this.config.hideDistance) {
+			const distanceIconLabel = document.createElement('th');
+			distanceIconLabel.classList.add('centered');
 
-        const distanceIcon = document.createElement('i');
-        distanceIcon.classList.add('fa', 'fa-map-o');
-        distanceIconLabel.appendChild(distanceIcon);
+			const distanceIcon = document.createElement('i');
+			distanceIcon.classList.add('fa', 'fa-map-o');
+			distanceIconLabel.appendChild(distanceIcon);
 
-        if (!this.sortByPrice) {
-            distanceIconLabel.appendChild(this.createSortIcon());
-        }
+			if (!this.sortByPrice) {
+				distanceIconLabel.appendChild(this.createSortIcon());
+			}
 
-        labelRow.appendChild(distanceIconLabel);
+			labelRow.appendChild(distanceIconLabel);
+		}
 
         if (this.config.open) {
             const openCloseIconLabel = document.createElement('th');
@@ -428,10 +432,12 @@ Module.register('MMM-Fuel', {
             distance = this[`${this.priceList.unit}2${distanceUnit}`](distance);
         }
 
-        const distanceColumn = document.createElement('td');
-        distanceColumn.classList.add('centered');
-        distanceColumn.innerHTML = `${distance.toFixed(2)} ${distanceUnit}`;
-        row.appendChild(distanceColumn);
+		if (!this.config.hideDistance) {
+			const distanceColumn = document.createElement('td');
+			distanceColumn.classList.add('centered');
+			distanceColumn.innerHTML = `${distance.toFixed(2)} ${distanceUnit}`;
+			row.appendChild(distanceColumn);
+		}
 
         if (this.config.open) {
             const lockUnlockIconLabel = document.createElement('td');
